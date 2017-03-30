@@ -1,15 +1,18 @@
 import React, {Component} from 'react';
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import logo from '../logo.svg';
 import '../App.css';
 import Search from '../components/Search'
 import PeopleList from '../components/PeopleList'
 
-class App extends Component {
-    constructor() {
-        super()
+// import consumeApiHelper from '../helpers/consumeAPI'
+
+class People extends Component {
+    constructor(props) {
+        super(props)
         this.state = {
             data: [],
             query: ''
@@ -24,6 +27,7 @@ class App extends Component {
       let self = this
       axios.get('http://swapi.co/api/people/').then((response) => {
         console.log('response : ', response.data.results);
+        self.props.getPeople(response.data.results)
         self.setState({
           data: response.data.results
         })
@@ -49,11 +53,25 @@ class App extends Component {
                     </nav>
                     <Search handleChange={this.searchNews.bind(this)}/>
                     <PeopleList handleSearch={this.state.query} data={this.state.data} />
-
                 </div>
             </div>
         );
     }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    people: state.people
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getPeople: (result) => dispatch({
+      type: 'GET_PEOPLES',
+      payload: result
+    })
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (People);

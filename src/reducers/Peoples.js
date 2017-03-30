@@ -1,3 +1,8 @@
 export const peopleReducer = (state = [{name: 'Lalala'}], action) => {
-  return state
+  switch (action.type) {
+    case 'GET_PEOPLES':
+      return action.payload
+    default:
+      return state
+  }
 }
